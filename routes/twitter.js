@@ -52,7 +52,7 @@ var startQuerying = function() {
     getClient();
     if (client) {
       var params = {
-        q: '#meerkat',
+        q: '#meerkat "|LIVE NOW|"',
         count: 100,
         result_type: 'recent',
         since_id: SINCE_ID
