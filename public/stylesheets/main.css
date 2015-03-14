@@ -1,6 +1,6 @@
 body {
   padding: 0px;
-  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 14px 'source sans pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   background: #fff;
   color: #000;
 
@@ -44,17 +44,20 @@ div.switcher {
 	width: 100%;
 	height: 50px;
 	background-color: #fff;
+	text-align: left;
 }
 
 
 a.switch {
 	display: inline-block;
-	font-size: 50px;
+	font-size: 30px;
 	font-weight: bold;
 	color: #000;
 	cursor: pointer;
-	margin: 0 20px;
+	margin: 0 50px 0 0px;
 }
+
+
 
 a.switch:hover{
 	color: blue;
@@ -69,7 +72,7 @@ div.streams {
 
 
 div.live {
-	display: inline-block;
+	display: block;
 	position: absolute;
 	left: 0px;
 	top: 0px;
@@ -83,7 +86,7 @@ div.live {
 
 
 div.schedule {
-	display: inline-block;
+	display: none;
 	position: absolute;
 	left: 0px;
 	top: 0px;
@@ -100,29 +103,59 @@ div.oneStream {
 	display: block;
 	width: 100%;
 	text-align: left;
-	height: 50px;
-	border-bottom: 1px solid black;
+	height: 40px;
+	/*border-bottom: 1px solid #fafafa;*/
+	margin: 0 0 10px 0 ;
+	cursor: pointer;
+}
+
+
+div.oneStream:hover {
+	background-color: #eee;
+	
 }
 
 
 span.time {
 	display: inline-block;
-	font-size: 25px;
-	font-weight: bold;
-	padding: 0 20px 0 0;
+	width: 75px;
+	font-size: 20px;
+	font-weight: normal;
+	text-align: left;
+	padding: 7px 0px 0 0;
+	vertical-align: top;
+	color: #000;
+	font-family: 'source code pro';
+
 }
 
 
 img.twitterProfileImage {
 	display: inline-block;
+	width: 40px;
+	height: 40px;
 	border-radius: 50%;
 	/*padding: 0 20px 0 0;*/
+	vertical-align: top;
+}
+
+
+span.name {
+	display: inline-block;
+	font-size: 14px;
+	padding: 0 20px 0 0;
+	vertical-align: top;
 }
 
 
 
-
-
+span.text {
+	display: inline-block;
+	width: 800px;
+	font-size: 14px;
+	padding: 11px 0 0 20px;;
+	vertical-align: top;
+}
 
 
 
