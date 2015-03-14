@@ -37,6 +37,15 @@ var mostRecentToLeast = function(a, b) {
   return 0;
 };
 
+// Text transform the tweet
+var transformText = function(text) {
+  var transform = /^\|LIVE NOW\| ?(.*) http:\/\/t\.co\/(?:[\w]+)$/.exec(text);
+  if (transform && transform[1]) {
+    return transform[1];
+  }
+  return text;
+};
+
 var initializeClient = setInterval(function() {
   if (!client) {
     getClient();
@@ -52,7 +61,7 @@ var startQuerying = function() {
     getClient();
     if (client) {
       var params = {
-        q: '#meerkat "|LIVE NOW|"',
+        q: '#meerkat "|LIVE NOW|" -RT',
         count: 100,
         result_type: 'recent',
         since_id: SINCE_ID
@@ -69,7 +78,7 @@ var startQuerying = function() {
             newTweets.push({
               created_at: t.created_at,
               id: t.id_str,
-              text: t.text,
+              text: transformText(t.text),
               retweet_count: t.retweet_count,
               favorite_count: t.favorite_count,
               entities: t.entities,
