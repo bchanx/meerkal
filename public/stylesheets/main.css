@@ -1,0 +1,30 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+span {
+  font-weight: bold;
+  color: pink;
+  font-size: 30px;
+}
+
+div {
+  font-size: 13px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  border: 1px red solid;
+  border-radius: 2px;
+}
+
+.styl {
+  font-size: 20px;
+}
+.styl {
+  color: #ff0;
+}

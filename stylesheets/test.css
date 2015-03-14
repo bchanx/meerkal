@@ -1,0 +1,12 @@
+span {
+  font-weight: bold;
+  color: pink;
+  font-size: 30px;
+}
+
+div {
+  font-size: 13px;
+  display: flex;
+  border: 1px red solid;
+  border-radius: 2px;
+}
