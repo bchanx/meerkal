@@ -73,6 +73,7 @@ router.get('/search', function(req, res) {
   console.log("-->> PARAMS: ", params);
   client.get('/search/tweets', params, function(error, tweets, response) {
     if (error) {
+      console.log(error);
       return res.json({
         error: error.message || 'Failed to search tweets for: ' + JSON.stringify(params)
       });
