@@ -59,8 +59,8 @@ app.use(function(err, req, res, next) {
   });
 });
 
-var ENV = process.env.NODE_ENV || 'development';
-var PORT = process.env.NODE_PORT || 7000;
+var ENV = process.env.ENV || 'development';
+var PORT = process.env.PORT || 7000;
 
 var server = app.listen(PORT, function() {
   var host = server.address().address;
