@@ -57,7 +57,7 @@ fi" >> ~/.bash_profile
 function setupHomebrew {
   BREW_VER=$(brew --version 2>&1)
   if [[ $BREW_VER =~ "command not found" ]]; then
-    ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
   addPath /usr/local/bin
   BREW_DOC=$(brew doctor 2>&1)
