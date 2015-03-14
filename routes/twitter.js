@@ -111,6 +111,7 @@ router.get('/recent', function(req, res) {
   if (callback) {
     // jsonp
     res.write(callback + '(' + JSON.stringify(result) + ')');
+    res.end();
   }
   else {
     // json
