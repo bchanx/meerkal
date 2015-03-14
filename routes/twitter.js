@@ -103,10 +103,19 @@ var startQuerying = function() {
 };
 
 router.get('/recent', function(req, res) {
-  res.json({
+  var result = {
     error: null,
     data: TWEETS.recent.list
-  });
+  };
+  var callback = req.query.callback;
+  if (callback) {
+    // jsonp
+    res.write(callback + '(' + JSON.stringify(result) + ')');
+  }
+  else {
+    // json
+    res.json(result);
+  }
 });
 
 router.get('/search-fake', function(req, res) {
