@@ -44,6 +44,12 @@ function loadTweets() {
                 var streamItem = data.data[i];
 
                 streamItem.created_at = Date.parse(streamItem.created_at);
+
+                if (Math.round((now - streamItem.created_at)/1000) > 3000)
+                {
+                    continue;
+                }
+                
                 tweets.push(streamItem);
                 addStreamItemToHtml(streamItem, i);
             }
