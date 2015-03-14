@@ -47,9 +47,7 @@ gulp.task('css', function() {
   // Dev css
   gulp.src(['stylesheets/*.css', 'stylesheets/stylus/*.css'])
     .pipe(order([
-      'style.css',
-      'test.css',
-      '*.css'
+      'style.css'
     ]))
     .pipe(concat('main.css'))
     .pipe(autoprefixer('last 2 versions'))
