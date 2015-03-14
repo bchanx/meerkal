@@ -5,11 +5,22 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');
+var env = require('node-env-file');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var twitter = require('./routes/twitter');
 
 var app = express();
+
+// Load env variables
+var fs = require('fs');
+var envfile = path.join(__dirname, '.env');
+fs.exists(envfile, function(exists) {
+  if (exists) {
+    env(envfile);
+  }
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/api/twitter', twitter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -57,8 +69,8 @@ app.use(function(err, req, res, next) {
   });
 });
 
-var ENV = process.env.NODE_ENV || 'development';
-var PORT = process.env.NODE_PORT || 7000;
+var ENV = process.env.ENV || 'development';
+var PORT = process.env.PORT || 7000;
 
 var server = app.listen(PORT, function() {
   var host = server.address().address;
