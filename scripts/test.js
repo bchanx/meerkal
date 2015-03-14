@@ -3,6 +3,8 @@ var tweets = [];
 
 var now = Date.now();
 
+var timer;
+
 
 $(function () { 
 
@@ -36,7 +38,7 @@ function loadTweets() {
         dataType: 'jsonp',
         success: function( data ) {
 
-            var i = 0;
+            
             for (var i in data.data) {
 
                 var streamItem = data.data[i];
@@ -45,6 +47,8 @@ function loadTweets() {
                 tweets.push(streamItem);
                 addStreamItemToHtml(streamItem, i);
             }
+
+            timer = setInterval(refreshAllTimes, 1000);
 
         }
     });
@@ -101,12 +105,19 @@ function hMSString(totalSec, hoursToggle) {
     } else {
         return lH + hours + ':' + lM + minutes + ':' + lS + seconds;
     }
+
 }
 
 
 
 
-
+function refreshAllTimes() {
+    now = Date.now();
+    tweets.forEach(function(streamItem, i) {
+        var timeDiff = Math.round((now - streamItem.created_at)/1000);
+        $('#time' + i).text(hMSString(timeDiff, false));
+    });
+}
 
 
 
