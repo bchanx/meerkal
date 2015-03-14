@@ -37,6 +37,15 @@ var mostRecentToLeast = function(a, b) {
   return 0;
 };
 
+// Text transform the tweet
+var transformText = function(text) {
+  var transform = /^\|LIVE NOW\| ?(.*) http:\/\/t\.co\/(?:[\w]+)$/.exec(text);
+  if (transform && transform[1]) {
+    return transform[1];
+  }
+  return text;
+};
+
 var initializeClient = setInterval(function() {
   if (!client) {
     getClient();
@@ -52,7 +61,7 @@ var startQuerying = function() {
     getClient();
     if (client) {
       var params = {
-        q: '#meerkat',
+        q: '#meerkat "|LIVE NOW|" -RT',
         count: 100,
         result_type: 'recent',
         since_id: SINCE_ID
@@ -69,7 +78,7 @@ var startQuerying = function() {
             newTweets.push({
               created_at: t.created_at,
               id: t.id_str,
-              text: t.text,
+              text: transformText(t.text),
               retweet_count: t.retweet_count,
               favorite_count: t.favorite_count,
               entities: t.entities,
@@ -103,10 +112,20 @@ var startQuerying = function() {
 };
 
 router.get('/recent', function(req, res) {
-  res.json({
+  var result = {
     error: null,
     data: TWEETS.recent.list
-  });
+  };
+  var callback = req.query.callback;
+  if (callback) {
+    // jsonp
+    res.write(callback + '(' + JSON.stringify(result) + ')');
+    res.end();
+  }
+  else {
+    // json
+    res.json(result);
+  }
 });
 
 router.get('/search-fake', function(req, res) {
