@@ -15,13 +15,15 @@ var twitter = require('./routes/twitter');
 var app = express();
 
 // Load env variables
-var fs = require('fs');
-var envfile = path.join(__dirname, '.env');
-fs.exists(envfile, function(exists) {
-  if (exists) {
-    env(envfile);
-  }
-});
+if (!process.env.TWITTER_CONSUMER_KEY) {
+  var fs = require('fs');
+  var envfile = path.join(__dirname, '.env');
+  fs.exists(envfile, function(exists) {
+    if (exists) {
+      env(envfile);
+    }
+  });
+}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
