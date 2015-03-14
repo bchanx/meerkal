@@ -2,11 +2,12 @@ var express = require('express');
 var router = express.Router();
 var url = require('url');
 var Twitter = require('twitter');
+var logging = require('winston');
 
 var client = null;
 
 var getClient = function() {
-  if (!client) {
+  if (!client && process.env.TWITTER_CONSUMER_KEY) {
     client = new Twitter({
       consumer_key: process.env.TWITTER_CONSUMER_KEY,
       consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
@@ -16,8 +17,97 @@ var getClient = function() {
   }
 };
 
-var TWEETS = [];
+var TWEETS = {
+  recent: {
+    list: [],
+    max_count: 100
+  }
+};
+
 var SINCE_ID = 0;
+
+var mostRecentToLeast = function(a, b) {
+  // Sort by most to least recent
+  if (a.created_at > b.created_at) {
+    return -1;
+  }
+  if (a.created_at < b.created_at) {
+    return 1;
+  }
+  return 0;
+};
+
+var initializeClient = setInterval(function() {
+  if (!client) {
+    getClient();
+  }
+  else {
+    clearInterval(initializeClient);
+    startQuerying();
+  }
+}, 100);
+
+var startQuerying = function() {
+  setInterval(function getTweets() {
+    getClient();
+    if (client) {
+      var params = {
+        q: '#meerkat',
+        count: 100,
+        result_type: 'recent',
+        since_id: SINCE_ID
+      };
+      logging.info('[twitter] querying for: ', params);
+      client.get('/search/tweets', params, function(error, tweets, response) {
+        if (error) {
+          logging.error('[twitter] ' + (error.message || 'Failed to search tweets for: ' + JSON.stringify(params)));
+          return;
+        }
+        if (tweets.statuses) {
+          var newTweets = [];
+          tweets.statuses.forEach(function(t) {
+            newTweets.push({
+              created_at: t.created_at,
+              id: t.id_str,
+              text: t.text,
+              retweet_count: t.retweet_count,
+              favorite_count: t.favorite_count,
+              entities: t.entities,
+              user: {
+                id: t.user.id_str,
+                name: t.user.name,
+                screen_name: t.user.screen_name,
+                followers_count: t.user.followers_count,
+                friends_count: t.user.friends_count,
+                profile_image_url: t.user.profile_image_url
+              }
+            });
+          });
+          // Update our tweet list
+          newTweets.sort(mostRecentToLeast);
+          TWEETS.recent.list = newTweets.concat(TWEETS.recent.list);
+          if (TWEETS.recent.list.length > TWEETS.recent.max_count) {
+            TWEETS.recent.list = TWEETS.recent.list.slice(0, TWEETS.recent.max_count);
+          }
+        }
+
+        // Update our since ID for the next query
+        logging.info('[twitter]', tweets.search_metadata);
+        if (tweets.search_metadata && tweets.search_metadata.max_id_str) {
+          SINCE_ID = tweets.search_metadata.max_id_str;
+        }
+      })
+    }
+    return getTweets;
+  }(), 10000);
+};
+
+router.get('/recent', function(req, res) {
+  res.json({
+    error: null,
+    data: TWEETS.recent.list
+  });
+});
 
 router.get('/search-fake', function(req, res) {
   res.json({
@@ -61,68 +151,6 @@ router.get('/search-fake', function(req, res) {
       }
     }]
   });
-});
-
-router.get('/search', function(req, res) {
-  getClient();
-  var params = {
-    q: '#meerkat',
-    count: 25,
-    since_id: SINCE_ID
-  };
-  console.log("-->> PARAMS: ", params);
-  client.get('/search/tweets', params, function(error, tweets, response) {
-    if (error) {
-      console.log(error);
-      return res.json({
-        error: error.message || 'Failed to search tweets for: ' + JSON.stringify(params)
-      });
-    }
-    if (tweets.statuses) {
-      var newTweets = [];
-      tweets.statuses.forEach(function(t) {
-        newTweets.push({
-          created_at: t.created_at,
-          id: t.id_str,
-          text: t.text,
-          retweet_count: t.retweet_count,
-          favorite_count: t.favorite_count,
-          entities: t.entities,
-          user: {
-            id: t.user.id_str,
-            name: t.user.name,
-            screen_name: t.user.screen_name,
-            followers_count: t.user.followers_count,
-            friends_count: t.user.friends_count,
-            profile_image_url: t.user.profile_image_url
-          }
-        });
-      });
-      // Sort by most to least recent
-      newTweets.sort(function(a, b) {
-        if (a.created_at > b.created_at) {
-          return -1;
-        }
-        if (a.created_at < b.created_at) {
-          return 1;
-        }
-        return 0;
-      });
-      TWEETS = TWEETS.concat(newTweets);
-    }
-    console.log("-->> TWEETS LENGTH: ", TWEETS.length);
-
-    // Update our since ID for the next query
-    console.log(tweets.search_metadata);
-    if (tweets.search_metadata && tweets.search_metadata.max_id_str) {
-      SINCE_ID = tweets.search_metadata.max_id_str;
-    }
-
-    return res.json({
-      error: null,
-      data: TWEETS
-    });
-  })
 });
 
 module.exports = router;

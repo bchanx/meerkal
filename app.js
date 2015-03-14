@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');
 var env = require('node-env-file');
+var logging = require('winston');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -75,6 +76,6 @@ var PORT = process.env.PORT || 7000;
 var server = app.listen(PORT, function() {
   var host = server.address().address;
   var port = server.address().port;
-  console.log('Server listening at http://%s:%s', host, port);
+  logging.info('[app.js] Server listening at http://%s:%s', host, port);
 });
 
