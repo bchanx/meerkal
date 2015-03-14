@@ -182,6 +182,18 @@ span.text {
 
 
 
+div.footer {
+	display: block;
+	padding-top: 50px;
+	padding-left: 10px;
+	padding-bottom: 50px;
+}
+
+div.a {
+	cursor: pointer;
+}
+
+
 
 
 
